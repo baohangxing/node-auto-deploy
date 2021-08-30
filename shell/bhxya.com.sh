@@ -12,7 +12,7 @@ if [ $md5_old = $md5_new ]
 then
   sudo npm run build
 
-  pm2 restart all
+  pm2 restart npm -- run serve
 
 else
   # npm install
