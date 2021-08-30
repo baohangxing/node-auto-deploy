@@ -1,0 +1,24 @@
+{
+    "name": "node-auto-deploy",
+    "version": "1.0.0",
+    "description": ". Nodejs 自动部署程序，结合 github webhook,读取 json 配置文件部署项目\r . 支持队列、日志、飞书群消息推送",
+    "main": "app.js",
+    "private": "true",
+    "directories": {
+        "test": "node app.js"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/baohangxing/node-auto-deploy.git"
+    },
+    "author": "",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/baohangxing/node-auto-deploy/issues"
+    },
+    "homepage": "https://github.com/baohangxing/node-auto-deploy#readme",
+    "dependencies": {}
+}

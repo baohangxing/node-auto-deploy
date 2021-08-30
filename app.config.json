@@ -1,0 +1,6 @@
+{
+  "secret": "79327f306eff963cf37fe26e",
+  "listenPort": "8009",
+  "listenHost": "0.0.0.0",
+  "env": "正式环境"
+}
