@@ -1,5 +1,5 @@
 var http = require('https');
-const fileHandle = require('./utills/fileHandle');
+const fileHandle = require('./fileHandle');
 const APPConfig = fileHandle.readJsonSync(`${process.cwd()}/app.config.json`);
 
 var options = {
