@@ -6,8 +6,8 @@ const APPConfig = fileHandle.readJsonSync(`${process.cwd()}/app.config.json`);
 function execShellFile(shellpath, params = []) {
     return new Promise((resovle, reject) => {
         callfile.execFile(
-            shellpath,
-            params,
+            'sh',
+            [shellpath, ...params],
             null,
             function (err, stdout, stderr) {
                 const ts = new Date().Format('yyyyMMddhhmmss');

@@ -92,7 +92,7 @@ http.createServer((req, res) => {
                 });
                 pushMessage('排队中。。。', info);
             }
-            res.end('code: 200\n 部署任务已提交');
+            res.end('code: 200\n部署任务已提交');
         } catch (error) {
             res.end(error.stack);
         }
