@@ -1,7 +1,6 @@
 require('./datePrototype');
 const callfile = require('child_process');
 const fileHandle = require('./fileHandle');
-const APPConfig = fileHandle.readJsonSync(`${process.cwd()}/app.config.json`);
 
 function execShellFile(shellpath, params = []) {
     return new Promise((resovle, reject) => {
@@ -10,7 +9,7 @@ function execShellFile(shellpath, params = []) {
             [shellpath, ...params],
             null,
             function (err, stdout, stderr) {
-                const ts = new Date().Format('yyyyMMddhhmmss');
+                const ts = new Date().Format('yyyyMMdd-hhmmss');
                 if (err !== null) {
                     let errorFileName = `${process.cwd()}/logs/${ts}.error.log`;
                     fileHandle.createFile(
