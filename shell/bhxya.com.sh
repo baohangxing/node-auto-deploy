@@ -1,9 +1,9 @@
 cd $1
   md5_old=`md5sum package.json|awk '{print $1;}'`
 
-  sudo git checkout master
+  sudo git checkout main
   sudo git fetch --all
-  sudo git reset --hard origin/master
+  sudo git reset --hard origin/main
   sudo git pull
 
   md5_new=`md5sum package.json|awk '{print $1;}'`
