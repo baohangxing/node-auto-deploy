@@ -1,9 +1,10 @@
 var http = require('https');
+const APPConfig = fileHandle.readJsonSync(`${process.cwd()}/app.config.json`);
 
 var options = {
     hostname: 'open.feishu.cn',
     port: 443,
-    path: '/open.feishu.cn/open-apis/bot/v2/hook/03152f4e-29d2-45d3-b7c8-9e8e423743fe',
+    path: `/open-apis/bot/v2/hook/${APPConfig.feishuBot}`,
     method: 'POST',
     rejectUnauthorized: false,
     headers: {
@@ -15,13 +16,13 @@ function messagePush(messageText) {
     var req = http.request(options, function (res) {
         res.setEncoding('utf8');
         res.on('data', function (chunk) {
-            // console.log("BODY: " + chunk);
+            //console.log('BODY: ' + chunk);
             //JSON.parse(chunk)
         });
     });
 
     req.on('error', function (e) {
-        // console.log("problem with request: " + e.message);
+        //console.log('problem with request: ' + e.message);
     });
 
     // write data to request body
