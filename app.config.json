@@ -1,7 +1,6 @@
 {
-  "feishuBot": "03152f4e-29d2-45d3-b7c8-9e8e423743fe", 
-  "secret": "79327f306eff963cf37fe26e",
-  "listenPort": "8009",
-  "listenHost": "0.0.0.0",
-  "env": "正式环境"
+    "feishuBot": "",
+    "listenPort": 8009,
+    "listenHost": "127.0.0.1",
+    "env": "正式环境"
 }

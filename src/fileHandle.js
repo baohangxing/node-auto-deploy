@@ -1,5 +1,6 @@
 const fs = require('fs');
 const crypto = require('crypto');
+const path = require('path');
 
 class fileHandle {
     static fileExists(filepath) {
@@ -19,6 +20,27 @@ class fileHandle {
     static createFile(path, text) {
         fs.writeFile(path, text, (err, data) => {
             if (err) throw err;
+        });
+    }
+
+    static getDirFilePathList(dirPath) {
+        return new Promise(function (res, rej) {
+            fs.readdir(dirPath, function (err, files) {
+                if (err) {
+                    console.error(err);
+                    res([]);
+                } else {
+                    let list = [];
+                    for (let i = 0; i < files.length; i++) {
+                        if (
+                            fs.statSync(path.join(dirPath, files[i])).isFile()
+                        ) {
+                            list.push(files[i]);
+                        }
+                    }
+                    res(list);
+                }
+            });
         });
     }
 

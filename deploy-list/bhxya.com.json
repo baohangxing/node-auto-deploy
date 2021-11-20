@@ -1,6 +1,6 @@
 {
-  "id": "1",
-  "projectDir": "/baohangxing/code/bhxya.com",
-  "type": "javascript",
-  "desc": "bhxya.com, blog"
+    "id": 1,
+    "projectDir": "/baohangxing/code/bhxya.com",
+    "secret": "bhxya.com_1120_djedequ_bhx",
+    "description": "bhxya.com, blog"
 }
