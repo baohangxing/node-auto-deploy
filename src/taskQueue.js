@@ -30,7 +30,7 @@ class TaskQueue {
                         deployConf.id,
                         taskName,
                         deployConf.projectDir,
-                        deployConf.secret,
+                        deployConf.githubFullName,
                         deployConf.description
                     )
                 );
@@ -39,15 +39,31 @@ class TaskQueue {
         this._tasks = tasks;
     }
 
-    autoDeploy(secret) {
+    autoDeploy(githubFullName, hooks = {}) {
         let addQueueFlag = false;
         for (let task of this._tasks) {
-            if (task.checkSecret(secret)) {
+            if (task.checkGithubFullName(githubFullName)) {
+                let newTask = task.copyTask();
+                if (hooks.beforeHooks && hooks.beforeHooks.length) {
+                    for (let hook of hooks.beforeHooks) {
+                        newTask.addBeforeHook(hook);
+                    }
+                }
+                if (hooks.deploydHooks && hooks.deploydHooks.length) {
+                    for (let hook of hooks.deploydHooks) {
+                        newTask.addDeloyHook(hook);
+                    }
+                }
+                if (hooks.errorHooks && hooks.errorHooks.length) {
+                    for (let hook of hooks.errorHooks) {
+                        newTask.addErrorHook(hook);
+                    }
+                }
                 if (this._isExcuting) {
-                    this._toDeployTasks.push(task);
+                    this._toDeployTasks.push(newTask);
                     addQueueFlag = true;
                 } else {
-                    this._toDeployTasks.push(task);
+                    this._toDeployTasks.push(newTask);
                     this._loopDeply();
                 }
             }

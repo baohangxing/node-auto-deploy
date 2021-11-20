@@ -4,7 +4,7 @@ const path = require('path');
 class Task {
     id;
     name;
-    _secret; //确认密钥
+    githubFullName;
     projectDir;
     description;
 
@@ -12,19 +12,39 @@ class Task {
     deploydHooks;
     errorHooks;
 
-    constructor(id, name, projectDir, secret, description = '') {
+    constructor(id, name, projectDir, githubFullName, description = '') {
         this.id = id;
         this.name = name;
         this.projectDir = projectDir;
-        this._secret = secret;
+        this.githubFullName = githubFullName;
         this.description = description;
         this.beforeHooks = [];
         this.deploydHooks = [];
         this.errorHooks = [];
     }
 
-    checkSecret(secret) {
-        return secret === this._secret;
+    copyTask() {
+        let task = new Task(
+            this.id,
+            this.name,
+            this.projectDir,
+            this.githubFullName,
+            this.description
+        );
+        for (let hook of this.beforeHooks) {
+            task.addBeforeHook(hook);
+        }
+        for (let hook of this.deploydHooks) {
+            task.addDeloyHook(hook);
+        }
+        for (let hook of this.errorHooks) {
+            task.addErrorHook(hook);
+        }
+        return task;
+    }
+
+    checkGithubFullName(fullName) {
+        return fullName === this.githubFullName;
     }
 
     addDeloyHook(hook) {
