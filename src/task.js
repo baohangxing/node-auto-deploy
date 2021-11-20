@@ -93,7 +93,7 @@ class Task {
                 await hook(this);
             }
             let start_ts = new Date().getTime();
-            execShellFile(shellPath, this.projectDir).then(async res => {
+            execShellFile(shellPath, [this.projectDir]).then(async res => {
                 let timeCost = Math.ceil(
                     (new Date().getTime() - start_ts) / 1000
                 );
