@@ -3,8 +3,8 @@ const callfile = require('child_process');
 function execShellFile(shellpath, params = []) {
     return new Promise((resovle, reject) => {
         callfile.execFile(
-            'sh',
-            [shellpath, ...params],
+            shellpath,
+            params,
             null,
             function (err, stdout, stderr) {
                 if (err !== null) {

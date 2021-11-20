@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 /config
-/logs
-/deploy-list
-/shell
+logs
+deploy-list
+shell
+
+app.config.json
