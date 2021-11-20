@@ -1,5 +1,5 @@
 var http = require('https');
-const fileHandle = require('./fileHandle');
+const fileHandle = require('../src/fileHandle');
 const APPConfig = fileHandle.readJsonSync(`${process.cwd()}/app.config.json`);
 
 var options = {
@@ -14,6 +14,8 @@ var options = {
 };
 
 function messagePush(messageText) {
+    if (!APPConfig.feishuBot) return;
+
     var req = http.request(options, function (res) {
         res.setEncoding('utf8');
         res.on('data', function (chunk) {

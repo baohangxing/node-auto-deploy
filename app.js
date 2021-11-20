@@ -1,120 +1,63 @@
 const http = require('http');
-const fileHandle = require('./utills/fileHandle');
-const execShellFile = require('./utills/execShell');
+const fileHandle = require('./src/fileHandle');
 const messagePush = require('./utills/messagePush');
-const createMessage = require('./utills/messageTpl.js');
 const App = fileHandle.readJsonSync('app.config.json');
+const TaskQueue = require('./src/taskQueue');
+const Log = require('./src/log');
 
-global.TaskQueue = []; //任务队列
-global.Excuting = false; //正在执行
+const taskQueue = new TaskQueue();
 
-//当前任务
-global.ProjectInfo = {
-    project: '',
-    commitUser: '',
-    commitMessage: '',
-};
+taskQueue.init().then(res => {
+    taskQueue.tasksAddErrorHook(function (task, error) {
+        Log.error(task.name, error);
+    });
 
-setInterval(queryShellTask, 2000);
+    taskQueue.tasksAddErrorHook(function (task, error) {
+        const text = `项目：${task.name}\n部署错误! ${error}`;
+        messagePush(text);
+    });
 
-function queryShellTask() {
-    if (TaskQueue.length > 0 && Excuting === false) {
-        Excuting = true;
-        const taskInfo = TaskQueue[TaskQueue.length - 1];
-        ProjectInfo = taskInfo.ProjectInfo;
-        pushMessage('正在部署。。。', ProjectInfo);
-        var start_ts = new Date().getTime();
-        execShellFile(taskInfo.shellPath, taskInfo.shellParams).then(res => {
-            TaskQueue.pop();
-            Excuting = false;
-            var spend = Math.ceil((new Date().getTime() - start_ts) / 1000);
-            pushMessage(
-                res.shellResult === true
-                    ? `部署成功(${spend}s)`
-                    : `错误! ${res.log}`,
-                ProjectInfo
-            );
-        });
-    }
-}
+    taskQueue.tasksAddBeforeHook(function (task, timeCost) {
+        const text = `项目：${task.name}\n开始部署。。。`;
+        messagePush(text);
+    });
 
-http.createServer((req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/html;charset=utf-8' });
+    taskQueue.tasksAddSuccessHook(function (task, timeCost) {
+        const text = `项目：${task.name}\n提交人：${1}\n提交信息：${1}\n环境：${
+            App.env
+        }\n状态：部署成功(${timeCost}s)\n`;
+        messagePush(text);
+    });
+    console.log(taskQueue);
+});
 
-    req.on('data', async chunk => {
+const server = http.createServer((req, res) => {
+    let data = '';
+    req.on('data', chunk => {
+        data += chunk;
+    });
+
+    req.on('end', () => {
+        res.writeHead(200, { 'Content-Type': 'text/html;charset=utf-8' });
+        let queryData;
         try {
-            const data = JSON.parse(decodeURIComponent(chunk));
-
-            if (validDeploySecret(data) === false) {
-                return res.end('code: 401\n 没有部署权限');
-            }
-
-            if (validDeployRequest(data) === false) {
-                return res.end('code: 5002\n 没有要执行的部署任务');
-            }
-
-            // 根据name读取项目部署配置
-            const name = data.repository.name;
-            const deployConf = fileHandle.readJsonSync(
-                `${process.cwd()}/deploy-list/${name}.json`
+            queryData = JSON.parse(data);
+        } catch {
+            return res.end('格式错误');
+        }
+        try {
+            console.log(queryData);
+            let isAddQueueFlag = taskQueue.autoDeploy(
+                'bhxya.com_1120_djedequ_bhx'
             );
-
-            const shellPath = `${process.cwd()}/shell/${name}.sh`;
-
-            const info = {
-                project: `${data.repository.name}(${data.repository.description})`,
-                commitUser: data.head_commit.author.name,
-                commitMessage: data.head_commit.message,
-            };
-            // 队列为空，立即执行任务
-            if (TaskQueue.length === 0 && Excuting === false) {
-                Excuting = true;
-                ProjectInfo = info;
-                pushMessage('正在部署。。。', info);
-                var start = new Date().getTime();
-                execShellFile(shellPath, [deployConf.projectDir]).then(res => {
-                    Excuting = false;
-                    var spends = Math.ceil(
-                        (new Date().getTime() - start) / 1000
-                    );
-                    pushMessage(
-                        res.shellResult === true
-                            ? `部署成功(${spends}s)`
-                            : `错误! ${res.log}`,
-                        info
-                    );
-                });
-            } else {
-                TaskQueue.unshift({
-                    shellPath: shellPath,
-                    shellParams: [deployConf.projectDir],
-                    ProjectInfo: info,
-                });
-                pushMessage('排队中。。。', info);
-            }
-            res.end('code: 200\n部署任务已提交');
+            res.end(isAddQueueFlag ? '部署任务加入队列' : '部署任务开始');
         } catch (error) {
-            res.end(error.stack);
+            res.end(error.message + '\n\n' + error.stack);
         }
     });
-}).listen(App.listenPort, App.listenHost);
+});
 
-// 触发部署的条件
-function validDeployRequest(data) {
-    return data.ref === 'refs/heads/main';
-}
-
-//验证secret
-function validDeploySecret(data) {
-    //TODO return data.hook.config.secret === App.secret;
-    return true;
-}
-
-function pushMessage(text, projectInfo) {
-    const msg = createMessage({
-        env: App.env,
-        statusText: text,
-        ...projectInfo,
-    });
-    messagePush(msg);
-}
+server.listen(App.listenPort, App.listenHost);
+console.log(
+    `server run on http://${App.listenHost}:${App.listenPort} successful`
+);

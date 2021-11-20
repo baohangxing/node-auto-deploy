@@ -1,6 +1,4 @@
-require('./datePrototype');
 const callfile = require('child_process');
-const fileHandle = require('./fileHandle');
 
 function execShellFile(shellpath, params = []) {
     return new Promise((resovle, reject) => {
@@ -9,23 +7,17 @@ function execShellFile(shellpath, params = []) {
             [shellpath, ...params],
             null,
             function (err, stdout, stderr) {
-                const ts = new Date().Format('yyyyMMdd-hhmmss');
                 if (err !== null) {
-                    let errorFileName = `${process.cwd()}/logs/${ts}.error.log`;
-                    fileHandle.createFile(
-                        errorFileName,
-                        '\nNodeError:\n' +
-                            err +
-                            '\nStdError:\n' +
-                            stderr +
-                            '\nStdOut:\n' +
-                            stdout
-                    );
+                    let errorFileName =
+                        'NodeError:\n   ' +
+                        err +
+                        '\nStdError:\n   ' +
+                        stderr +
+                        '\nStdOut:\n   ' +
+                        stdout;
                     resovle({ shellResult: false, log: errorFileName });
                 } else {
-                    let fileName = `${process.cwd()}/logs/${ts}.log`;
-                    fileHandle.createFile(fileName, stdout);
-                    resovle({ shellResult: true, log: fileName });
+                    resovle({ shellResult: true, log: '' });
                 }
             }
         );
