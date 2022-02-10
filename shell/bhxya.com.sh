@@ -1,3 +1,6 @@
+#! /bin/bash
+set -e
+
 cd $1
   md5_old=`md5sum package.json|awk '{print $1;}'`
 
