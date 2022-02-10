@@ -9,7 +9,8 @@
     },
     "scripts": {
         "dev": "node app.js",
-        "lint": "eslint . --ext .js --fix"
+        "lint": "eslint . --ext .js --fix",
+        "prepare": "husky install"
     },
     "repository": {
         "type": "git",
@@ -29,6 +30,7 @@
         "eslint-config-alloy": "^4.4.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-prettier": "^3.4.1",
+        "husky": "^7.0.4",
         "prettier": "^2.2.1"
     }
 }
