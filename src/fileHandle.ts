@@ -1,9 +1,9 @@
-const fs = require('fs');
-const crypto = require('crypto');
-const path = require('path');
+import * as fs from 'fs';
+import * as crypto from 'crypto';
+import * as path from 'path';
 
 class fileHandle {
-  static fileExists(filepath) {
+  static fileExists(filepath: fs.PathLike) {
     return new Promise((resovle, reject) => {
       fs.access(filepath, fs.constants.F_OK, (err) => {
         err === null ? resovle(true) : resovle(false);
@@ -11,19 +11,19 @@ class fileHandle {
     });
   }
 
-  static readJsonSync(path) {
-    const rawdata = fs.readFileSync(path);
-    const res = JSON.parse(rawdata);
+  static readJsonSync(path: fs.PathOrFileDescriptor) {
+    const rawdata: Buffer = fs.readFileSync(path);
+    const res = JSON.parse(rawdata.toString());
     return res;
   }
 
-  static createFile(path, text) {
-    fs.writeFile(path, text, (err, data) => {
+  static createFile(path: fs.PathOrFileDescriptor, text: string) {
+    fs.writeFile(path, text, (err: any) => {
       if (err) throw err;
     });
   }
 
-  static getDirFilePathList(dirPath) {
+  static getDirFilePathList(dirPath: fs.PathLike) {
     return new Promise((res, rej) => {
       fs.readdir(dirPath, (err, files) => {
         if (err) {
@@ -32,7 +32,7 @@ class fileHandle {
         } else {
           let list = [];
           for (let i = 0; i < files.length; i++) {
-            if (fs.statSync(path.join(dirPath, files[i])).isFile()) {
+            if (fs.statSync(path.join(dirPath.toString(), files[i])).isFile()) {
               list.push(files[i]);
             }
           }
@@ -42,7 +42,7 @@ class fileHandle {
     });
   }
 
-  static createFileHash256Sync(filePath) {
+  static createFileHash256Sync(filePath: fs.PathOrFileDescriptor) {
     const buffer = fs.readFileSync(filePath);
     const fsHash = crypto.createHash('sha256');
 
@@ -52,4 +52,4 @@ class fileHandle {
   }
 }
 
-module.exports = fileHandle;
+export default fileHandle;

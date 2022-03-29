@@ -1,6 +1,6 @@
-const callfile = require('child_process');
+import * as callfile from 'child_process';
 
-function execShellFile(shellpath, params = []) {
+function execShellFile(shellpath: string, params = []) {
   return new Promise((resovle, reject) => {
     callfile.execFile('sh', [shellpath, ...params], null, (err, stdout, stderr) => {
       if (err !== null) {
@@ -13,4 +13,4 @@ function execShellFile(shellpath, params = []) {
   });
 }
 
-module.exports = execShellFile;
+export default execShellFile;

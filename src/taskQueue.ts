@@ -1,16 +1,21 @@
-const fileHandle = require('./fileHandle');
-const Task = require('./task');
-const path = require('path');
+import fileHandle from './fileHandle';
+import Task from './task';
+import * as path from 'path';
+interface autoDeployHooks {
+  beforeHooks: Array<Function>;
+  deploydHooks: Array<Function>;
+  errorHooks: Array<Function>;
+}
 
 class TaskQueue {
-  _tasks = [];
-  _toDeployTasks = [];
-  _isExcuting = false;
+  _tasks: Array<Task> = [];
+  _toDeployTasks: Array<Task> = [];
+  _isExcuting: boolean = false;
 
   async init() {
-    let taskFileNames = (await fileHandle.getDirFilePathList(path.join(process.cwd(), 'deploy-list'))).map((x) =>
-      x.replace(/\.json$/, ''),
-    );
+    let taskFileNames = ((await fileHandle.getDirFilePathList(
+      path.join(process.cwd(), 'deploy-list'),
+    )) as any).map((x: string) => x.replace(/\.json$/, ''));
 
     let tasks = [];
     for (let taskName of taskFileNames) {
@@ -25,7 +30,7 @@ class TaskQueue {
     this._tasks = tasks;
   }
 
-  autoDeploy(githubFullName, hooks = {}) {
+  autoDeploy(githubFullName: string, hooks: autoDeployHooks) {
     let addQueueFlag = false;
     for (let task of this._tasks) {
       if (task.checkGithubFullName(githubFullName)) {
@@ -69,23 +74,23 @@ class TaskQueue {
     }
   }
 
-  tasksAddErrorHook(hook) {
+  tasksAddErrorHook(hook: Function) {
     for (let task of this._tasks) {
       task.addErrorHook(hook);
     }
   }
 
-  tasksAddBeforeHook(hook) {
+  tasksAddBeforeHook(hook: Function) {
     for (let task of this._tasks) {
       task.addBeforeHook(hook);
     }
   }
 
-  tasksAddSuccessHook(hook) {
+  tasksAddSuccessHook(hook: Function) {
     for (let task of this._tasks) {
       task.addDeloyHook(hook);
     }
   }
 }
 
-module.exports = TaskQueue;
+export default TaskQueue;
