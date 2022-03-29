@@ -1,19 +1,26 @@
-const execShellFile = require('./../utills/execShell');
-const path = require('path');
+import execShellFile from './../utills/execShell';
+import * as path from 'path';
+interface execShellFileRes {
+  shellResult: boolean;
+  log: string;
+}
+interface taskResult {
+  success: boolean;
+}
 
 class Task {
-  id;
-  name;
-  githubFullName;
-  projectDir;
-  description;
+  id: string;
+  name: string;
+  githubFullName: string;
+  projectDir: string;
+  description: string;
 
-  beforeHooks;
-  deploydHooks;
-  errorHooks;
+  beforeHooks: Array<Function>;
+  deploydHooks: Array<Function>;
+  errorHooks: Array<Function>;
 
   // eslint-disable-next-line max-params
-  constructor(id, name, projectDir, githubFullName, description = '') {
+  constructor(id: string, name: string, projectDir: string, githubFullName: string, description: string = '') {
     this.id = id;
     this.name = name;
     this.projectDir = projectDir;
@@ -38,15 +45,15 @@ class Task {
     return task;
   }
 
-  checkGithubFullName(fullName) {
+  checkGithubFullName(fullName: string) {
     return fullName === this.githubFullName;
   }
 
-  addDeloyHook(hook) {
+  addDeloyHook(hook: Function) {
     if (typeof hook === 'function') this.deploydHooks.push(hook);
   }
 
-  removeDeloyHook(hook) {
+  removeDeloyHook(hook: Function) {
     for (let i = this.deploydHooks.length; i >= 0; i--) {
       if (this.deploydHooks[i] === hook) {
         this.deploydHooks.splice(i, 1);
@@ -54,11 +61,11 @@ class Task {
     }
   }
 
-  addErrorHook(hook) {
+  addErrorHook(hook: Function) {
     if (typeof hook === 'function') this.errorHooks.push(hook);
   }
 
-  removeErrorHook(hook) {
+  removeErrorHook(hook: Function) {
     for (let i = this.errorHooks.length; i >= 0; i--) {
       if (this.errorHooks[i] === hook) {
         this.errorHooks.splice(i, 1);
@@ -66,24 +73,24 @@ class Task {
     }
   }
 
-  addBeforeHook(hook) {
+  addBeforeHook(hook: Function) {
     if (typeof hook === 'function') this.beforeHooks.push(hook);
   }
 
-  removeBeforeHook(hook) {
+  removeBeforeHook(hook: Function) {
     for (let i = this.beforeHooks.length; i >= 0; i--) {
       if (this.beforeHooks[i] === hook) {
         this.beforeHooks.splice(i, 1);
       }
     }
   }
-  async deploy() {
+  async deploy(): Promise<taskResult> {
     let shellPath = path.join(process.cwd(), 'shell', this.name + '.sh');
     for (let hook of this.beforeHooks) {
       await hook(this);
     }
     let start_ts = new Date().getTime();
-    let res = await execShellFile(shellPath, [this.projectDir]);
+    let res: execShellFileRes = (await execShellFile(shellPath, [this.projectDir as never])) as execShellFileRes;
     let timeCost = Math.ceil((new Date().getTime() - start_ts) / 1000);
     if (!res.shellResult) {
       for (let hook of this.errorHooks) {
@@ -103,4 +110,4 @@ class Task {
   }
 }
 
-module.exports = Task;
+export default Task;

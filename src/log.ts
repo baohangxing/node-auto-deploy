@@ -1,8 +1,8 @@
-const fileHandle = require('./fileHandle');
-const path = require('path');
+import fileHandle from './fileHandle';
+import * as path from 'path';
 
-function createLogName(taskName = '') {
-  let data = new Date();
+function createLogName(taskName: string = ''): string {
+  let data: Date = new Date();
 
   let name = `${data.getFullYear()}-${data.getMonth() + 1}-${data.getDate()}-${data.getHours()}_${
     data.getMinutes() <= 9 ? '0' + data.getMinutes() : data.getMinutes()
@@ -14,11 +14,9 @@ function createLogName(taskName = '') {
 
 class Log {
   /**
-   *
    * @param {*} taskName 任务名称
-   * @param {*} log 日志内容
    */
-  static log({ taskName = '', log = '', _handleSameId = 0, _fileEndName = '.log' }) {
+  static log({ taskName = '', log = '', _handleSameId = 0, _fileEndName = '.log' }: any): void {
     let fileName = createLogName(taskName) + (_handleSameId === 0 ? '' : `.${_handleSameId}`) + _fileEndName;
     let filePath = path.join(process.cwd(), 'logs', fileName);
     fileHandle.fileExists(filePath).then((res) => {
@@ -41,7 +39,7 @@ class Log {
    * @param {*} taskName 任务名称
    * @param {*} log 日志内容
    */
-  static error(taskName = '', log = '') {
+  static error(taskName: any = '', log: any = '') {
     this.log({
       taskName: taskName,
       log: log,
@@ -51,4 +49,4 @@ class Log {
   }
 }
 
-module.exports = Log;
+export default Log;

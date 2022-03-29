@@ -1,5 +1,5 @@
-let http = require('https');
-const fileHandle = require('../src/fileHandle');
+import * as http from 'http';
+import fileHandle from '../src/fileHandle';
 const APPConfig = fileHandle.readJsonSync(`${process.cwd()}/app.config.json`);
 
 let options = {
@@ -13,18 +13,18 @@ let options = {
   },
 };
 
-function messagePush(messageText) {
+function messagePush(messageText: string) {
   if (!APPConfig.feishuBot) return;
 
   let req = http.request(options, (res) => {
     res.setEncoding('utf8');
-    res.on('data', (chunk) => {
+    res.on('data', (_chunk: any) => {
       // console.log('BODY: ' + chunk);
       // JSON.parse(chunk)
     });
   });
 
-  req.on('error', (e) => {
+  req.on('error', () => {
     // console.log('problem with request: ' + e.message);
   });
 
@@ -41,4 +41,4 @@ function messagePush(messageText) {
   req.end();
 }
 
-module.exports = messagePush;
+export default messagePush;
