@@ -1,6 +1,6 @@
 import * as callfile from 'child_process';
 
-function execShellFile(shellpath: string, params = []) {
+function execShellFile(shellpath: string, params: string[] = []) {
   return new Promise((resovle, reject) => {
     callfile.execFile('sh', [shellpath, ...params], null, (err, stdout, stderr) => {
       if (err !== null) {

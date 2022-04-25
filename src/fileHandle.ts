@@ -3,7 +3,7 @@ import * as crypto from 'crypto';
 import * as path from 'path';
 
 class fileHandle {
-  static fileExists(filepath: fs.PathLike) {
+  static fileExists(filepath: fs.PathLike): Promise<boolean> {
     return new Promise((resovle, reject) => {
       fs.access(filepath, fs.constants.F_OK, (err) => {
         err === null ? resovle(true) : resovle(false);
@@ -18,12 +18,12 @@ class fileHandle {
   }
 
   static createFile(path: fs.PathOrFileDescriptor, text: string) {
-    fs.writeFile(path, text, (err: any) => {
+    fs.writeFile(path, text, (err) => {
       if (err) throw err;
     });
   }
 
-  static getDirFilePathList(dirPath: fs.PathLike) {
+  static getDirFilePathList(dirPath: fs.PathLike): Promise<Array<string>> {
     return new Promise((res, rej) => {
       fs.readdir(dirPath, (err, files) => {
         if (err) {
@@ -42,7 +42,7 @@ class fileHandle {
     });
   }
 
-  static createFileHash256Sync(filePath: fs.PathOrFileDescriptor) {
+  static createFileHash256Sync(filePath: fs.PathOrFileDescriptor): string {
     const buffer = fs.readFileSync(filePath);
     const fsHash = crypto.createHash('sha256');
 

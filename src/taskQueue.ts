@@ -1,11 +1,7 @@
 import fileHandle from './fileHandle';
 import Task from './task';
 import * as path from 'path';
-interface autoDeployHooks {
-  beforeHooks: Array<Function>;
-  deploydHooks: Array<Function>;
-  errorHooks: Array<Function>;
-}
+import { IAutoDeployHooks, IBeforeHookFn, IDeploydHookFn, IErrorHookFn } from '../type';
 
 class TaskQueue {
   _tasks: Array<Task> = [];
@@ -15,7 +11,7 @@ class TaskQueue {
   async init() {
     let taskFileNames = ((await fileHandle.getDirFilePathList(
       path.join(process.cwd(), 'deploy-list'),
-    )) as any).map((x: string) => x.replace(/\.json$/, ''));
+    )) as Array<string>).map((x: string) => x.replace(/\.json$/, ''));
 
     let tasks = [];
     for (let taskName of taskFileNames) {
@@ -30,7 +26,7 @@ class TaskQueue {
     this._tasks = tasks;
   }
 
-  autoDeploy(githubFullName: string, hooks: autoDeployHooks) {
+  autoDeploy(githubFullName: string, hooks: IAutoDeployHooks) {
     let addQueueFlag = false;
     for (let task of this._tasks) {
       if (task.checkGithubFullName(githubFullName)) {
@@ -74,19 +70,19 @@ class TaskQueue {
     }
   }
 
-  tasksAddErrorHook(hook: Function) {
+  tasksAddErrorHook(hook: IErrorHookFn) {
     for (let task of this._tasks) {
       task.addErrorHook(hook);
     }
   }
 
-  tasksAddBeforeHook(hook: Function) {
+  tasksAddBeforeHook(hook: IBeforeHookFn) {
     for (let task of this._tasks) {
       task.addBeforeHook(hook);
     }
   }
 
-  tasksAddSuccessHook(hook: Function) {
+  tasksAddSuccessHook(hook: IDeploydHookFn) {
     for (let task of this._tasks) {
       task.addDeloyHook(hook);
     }

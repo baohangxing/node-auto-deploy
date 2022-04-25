@@ -1,6 +1,6 @@
 # Node Auto Deploy
 
-一个使用 Nodejs 结合 github webhook 的自动化部署程序, 支持多项目、自定义脚本、部署队列、日志记录、飞书群消息推送。支持自定义拓展
+一个使用 Nodejs Ts 结合 github webhook 的自动化部署程序, 支持多项目、自定义脚本、部署队列、日志记录、飞书群消息推送。支持自定义拓展
 
 ## 如何使用
 
@@ -16,9 +16,9 @@ app.config.json 中配置 [飞书机器人密钥](https://www.feishu.cn/hc/zh-CN
 
 ```json
 {
-    "feishuBot": "",
-    "listenPort": 8009,
-    "listenHost": "127.0.0.1"
+  "feishuBot": "",
+  "listenPort": 8009,
+  "listenHost": "127.0.0.1"
 }
 ```
 
@@ -29,9 +29,9 @@ deploy-list 和 shell 文件夹中的文件名需要一致，不然会忽略
 
 ```json
 {
-    "projectDir": "/baohangxing/code/bhxya.com",
-    "githubFullName": "baohangxing/bhxya.com",
-    "description": "bhxya.com, blog"
+  "projectDir": "/baohangxing/code/bhxya.com",
+  "githubFullName": "baohangxing/bhxya.com",
+  "description": "bhxya.com, blog"
 }
 ```
 
@@ -48,13 +48,13 @@ deploy-list 和 shell 文件夹中的文件名需要一致，不然会忽略
 
 对于所有任务的统一配置
 
-```js
+```ts
 const taskQueue = new TaskQueue();
 
-taskQueue.init().then(res => {
-    taskQueue.tasksAddErrorHook(function (task, error) {
-        Log.error(task.name, error);
-    });
+taskQueue.init().then(() => {
+  taskQueue.tasksAddErrorHook((task: { name: string }, error: string) => {
+    Log.error(task.name, error);
+  });
 });
 ```
 
@@ -62,42 +62,34 @@ taskQueue.init().then(res => {
 
 ```js
 taskQueue.autoDeploy(queryData.repository.full_name, {
-    beforeHooks: [
-        function (task) {
-            const text = `项目：${task.name}\n提交人：${queryData.head_commit.author.username}\n提交信息：${queryData.head_commit.message}\n开始部署...\n`;
-            messagePush(text);
-        },
-    ],
-    deploydHooks: [
-        function (task, timeCost) {
-            const text = `项目：${task.name}\n提交人：${queryData.head_commit.author.username}\n提交信息：${queryData.head_commit.message}\n状态：部署成功(${timeCost}s)\n`;
-            messagePush(text);
-        },
-    ],
-    errorHooks: [
-        function (task, error) {
-            const text = `项目：${task.name}\n提交人：${queryData.head_commit.author.username}\n提交信息：${queryData.head_commit.message}\n状态：部署错误(${error})\n`;
-            messagePush(text);
-        },
-    ],
+  beforeHooks: [
+    function (task: { name: string }) {
+      const text = `项目：${task.name}\n提交人：${queryData.head_commit.author.username}\n提交信息：${queryData.head_commit.message}\n开始部署...\n`;
+      messagePush(text);
+    },
+  ],
+  deploydHooks: [
+    function (task: { name: string }, timeCost: number) {
+      const text = `项目：${task.name}\n提交人：${queryData.head_commit.author.username}\n提交信息：${queryData.head_commit.message}\n状态：部署成功(${timeCost}s)\n`;
+      messagePush(text);
+    },
+  ],
+  errorHooks: [
+    function (task: { name: string }, error: string) {
+      const text = `项目：${task.name}\n提交人：${queryData.head_commit.author.username}\n提交信息：${queryData.head_commit.message}\n状态：部署错误(${error})\n`;
+      messagePush(text);
+    },
+  ],
 });
 ```
 
 ## End
 
-欢迎 Pull request, 人菜心大，不足之处多多指教。 嘤嘤嘤
-
-
-
-
-
-
-
-
+人菜心大，不足之处多多指教。 嘤嘤嘤
 
 MIT License
 
-Copyright (c) 2021 H1mple
+Copyright (c) 2022 H1mple
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

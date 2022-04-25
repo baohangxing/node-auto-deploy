@@ -2,7 +2,7 @@ import * as http from 'http';
 import fileHandle from '../src/fileHandle';
 const APPConfig = fileHandle.readJsonSync(`${process.cwd()}/app.config.json`);
 
-let options = {
+const options = {
   hostname: 'open.feishu.cn',
   port: 443,
   path: `/open-apis/bot/v2/hook/${APPConfig.feishuBot}`,
