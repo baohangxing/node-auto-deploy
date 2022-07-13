@@ -15,12 +15,11 @@ if [ $md5_old = $md5_new ]
 then
   sudo npm run build
 
-  pm2 restart npm -- run serve
+  pm2 restart blog -- run serve
 
 else
-  # npm install
   sudo npm install --unsafe-perm
   sudo npm run build
 
-  pm2 restart npm -- run serve
+  pm2 restart blog -- run serve
 fi 

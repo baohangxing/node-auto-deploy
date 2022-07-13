@@ -30,7 +30,7 @@ class fileHandle {
           console.error(err);
           res([]);
         } else {
-          let list = [];
+          const list: string[] = [];
           for (let i = 0; i < files.length; i++) {
             if (fs.statSync(path.join(dirPath.toString(), files[i])).isFile()) {
               list.push(files[i]);

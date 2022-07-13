@@ -6,7 +6,7 @@ export interface ITaskResult {
   success: boolean;
 }
 
-export type IHookFn<T> = (task: ITask, t?: T) => void;
+export type IHookFn<T> = (task: ITask, t: T) => void;
 export type IBeforeHookFn = (task: ITask) => void;
 export type IDeploydHookFn = IHookFn<number>;
 export type IErrorHookFn = IHookFn<string>;
@@ -18,7 +18,7 @@ export interface IAutoDeployHooks {
 }
 
 export interface ITask {
-  id: string;
+  id: number;
   name: string;
   githubFullName: string;
   projectDir: string;

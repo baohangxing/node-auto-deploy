@@ -3,24 +3,55 @@ import Task from './task';
 import * as path from 'path';
 import { IAutoDeployHooks, IBeforeHookFn, IDeploydHookFn, IErrorHookFn } from '../type';
 
+type DeployConfJson = {
+  id: number;
+  projectDir: string;
+  githubFullName: string;
+  description: string;
+};
+
+function checkDeployConfJson(v: any) {
+  return (
+    v !== undefined &&
+    v.projectDir !== undefined &&
+    v.githubFullName !== undefined &&
+    v.description !== undefined &&
+    v.id !== undefined
+  );
+}
+
 class TaskQueue {
   _tasks: Array<Task> = [];
   _toDeployTasks: Array<Task> = [];
   _isExcuting: boolean = false;
 
   async init() {
-    let taskFileNames = ((await fileHandle.getDirFilePathList(
-      path.join(process.cwd(), 'deploy-list'),
-    )) as Array<string>).map((x: string) => x.replace(/\.json$/, ''));
+    const taskFileNames = (await fileHandle.getDirFilePathList(path.join(process.cwd(), 'deploy-list')))
+      .filter((x) => x.slice(x.length - 5) === '.json')
+      .map((x) => x.replace(/\.json$/, ''));
 
-    let tasks = [];
+    const tasks: Task[] = [];
     for (let taskName of taskFileNames) {
-      let shellExist = await fileHandle.fileExists(path.join(process.cwd(), 'shell', taskName + '.sh'));
+      const shellExist = await fileHandle.fileExists(path.join(process.cwd(), 'shell', taskName + '.sh'));
       if (shellExist) {
-        let deployConf = fileHandle.readJsonSync(path.join(process.cwd(), 'deploy-list', taskName + '.json'));
-        tasks.push(
-          new Task(deployConf.id, taskName, deployConf.projectDir, deployConf.githubFullName, deployConf.description),
-        );
+        try {
+          const deployConf: DeployConfJson = fileHandle.readJsonSync(
+            path.join(process.cwd(), 'deploy-list', taskName + '.json'),
+          );
+          if (checkDeployConfJson(deployConf)) {
+            tasks.push(
+              new Task(
+                deployConf.id,
+                taskName,
+                deployConf.projectDir,
+                deployConf.githubFullName,
+                deployConf.description,
+              ),
+            );
+          }
+        } catch (e) {
+          console.error(e);
+        }
       }
     }
     this._tasks = tasks;

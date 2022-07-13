@@ -3,7 +3,7 @@ import * as path from 'path';
 import { ITask, IBeforeHookFn, IDeploydHookFn, IErrorHookFn, ITaskResult, IExecShellFileRes } from './../type/index';
 
 class Task implements ITask {
-  id: string;
+  id: number;
   name: string;
   githubFullName: string;
   projectDir: string;
@@ -13,7 +13,7 @@ class Task implements ITask {
   deploydHooks: Array<IDeploydHookFn>;
   errorHooks: Array<IErrorHookFn>;
 
-  constructor(id: string, name: string, projectDir: string, githubFullName: string, description: string = '') {
+  constructor(id: number, name: string, projectDir: string, githubFullName: string, description: string = '') {
     this.id = id;
     this.name = name;
     this.projectDir = projectDir;

@@ -1,10 +1,10 @@
 import * as http from 'http';
 import fileHandle from './src/fileHandle';
 import messagePush from './utills/messagePush';
-const App = fileHandle.readJsonSync('app.config.json');
 import TaskQueue from './src/taskQueue';
 import Log from './src/log';
 
+const App = fileHandle.readJsonSync('app.config.json');
 const taskQueue = new TaskQueue();
 
 taskQueue.init().then(() => {
