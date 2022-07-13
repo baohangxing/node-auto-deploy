@@ -26,17 +26,17 @@ class TaskQueue {
   _isExcuting: boolean = false;
 
   async init() {
-    const taskFileNames = (await fileHandle.getDirFilePathList(path.join(process.cwd(), 'deploy-list')))
+    const taskFileNames = (await fileHandle.getDirFilePathList(path.join(process.cwd(), '..', 'deploy-list')))
       .filter((x) => x.slice(x.length - 5) === '.json')
       .map((x) => x.replace(/\.json$/, ''));
 
     const tasks: Task[] = [];
     for (let taskName of taskFileNames) {
-      const shellExist = await fileHandle.fileExists(path.join(process.cwd(), 'shell', taskName + '.sh'));
+      const shellExist = await fileHandle.fileExists(path.join(process.cwd(), '..', 'shell', taskName + '.sh'));
       if (shellExist) {
         try {
           const deployConf: DeployConfJson = fileHandle.readJsonSync(
-            path.join(process.cwd(), 'deploy-list', taskName + '.json'),
+            path.join(process.cwd(), '..', 'deploy-list', taskName + '.json'),
           );
           if (checkDeployConfJson(deployConf)) {
             tasks.push(
