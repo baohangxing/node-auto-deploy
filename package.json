@@ -11,7 +11,9 @@
         "dev": "node app.js",
         "lint": "eslint . --ext .js --fix",
         "prepare": "husky install",
-        "build": "tsc --outDir ./build app.ts"
+        "clear": "rm -rf ./build",
+        "config": "mkdir build && cp app.config.json ./build/app.config.json && cp -r deploy-list ./build/deploy-list && cp -r shell ./build/shell",
+        "build": "npm run clear && npm run config && tsc --outDir ./build app.ts"
     },
     "repository": {
         "type": "git",
